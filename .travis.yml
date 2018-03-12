@@ -12,8 +12,8 @@ branches:
 
 script:
   - |
-    lein test;
-    echo "branch $TRAVIS_BRANCH - event $TRAVIS_EVENT_TYPE - tag $TRAVIS_TAG"
+    lein test && echo "Done";
+    echo "branch: $TRAVIS_BRANCH, event: $TRAVIS_EVENT_TYPE, tag: $TRAVIS_TAG"
 
 after_success:
   - |   # deploy snapshot
