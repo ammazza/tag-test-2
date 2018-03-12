@@ -1,6 +1,11 @@
 language: clojure
 jdk: oraclejdk8
 
+env:
+  global:
+    - MY_VERSION: $(lein project-version 2> /dev/null)
+    - MY_TAG: $(git describe --tags 2> /dev/null)
+
 branches:
   only:
   - master
@@ -13,7 +18,7 @@ branches:
 script:
   - |
     lein test && echo "Done";
-    echo "branch: $TRAVIS_BRANCH, event: $TRAVIS_EVENT_TYPE, tag: $TRAVIS_TAG"
+    echo "branch: $TRAVIS_BRANCH, version: $MY_VERSION,event: $TRAVIS_EVENT_TYPE, travis-tag: $TRAVIS_TAG, my-tag: $MY_TAG"
 
 after_success:
   - |   # deploy snapshot
