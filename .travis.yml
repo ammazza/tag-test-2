@@ -1,0 +1,27 @@
+language: clojure
+jdk: oraclejdk8
+
+branches:
+  only:
+  - master
+  - devel
+  - "/^feature\\/.+$/"
+  - "/^release\\/.+$/"
+  - "/^hotfix\\/.+$/"
+  - "/^v\\d+\\.\\d+(\\.\\d+)?(-\\S*)?$/"
+
+script:
+  - |
+    lein test;
+    echo "branch $TRAVIS_BRANCH - event $TRAVIS_EVENT_TYPE - tag $TRAVIS_TAG"
+
+after_success:
+  - |   # deploy snapshot
+    if [ "$TRAVIS_EVENT_TYPE" == push -a "$TRAVIS_BRANCH" == "devel" ]; then
+      echo "PUBLISH DEVEL"
+    fi
+
+  - |  # deploy release
+    if [ "$TRAVIS_EVENT_TYPE" == push -a -n "$TRAVIS_TAG" ]; then
+      echo "RELEASE"
+    fi
