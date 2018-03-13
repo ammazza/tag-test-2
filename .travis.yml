@@ -21,10 +21,14 @@ script:
     echo "branch: $TRAVIS_BRANCH, version: $MY_VERSION,event: $TRAVIS_EVENT_TYPE, travis-tag: $TRAVIS_TAG, my-tag: $MY_TAG"
 
 # Snapshot: happens only on push to devel (and not on PR, so safe to leave PR-build on).
-#           Check on version ensures nothing bad happens if merging from release to devel
-#           and forgetting to change version to -SNAPSHOT.
+#           If it happens, version format is checked. If no -SNAPSHOT build fails
+#           (e.g. useful if merging release back to devel and forgetting version change).
 #
-# Release: here there's an inconsistency between Git CLI and GitHub UI.
+# Release: should happen only when pushing a tag.
+
+The version and tag need not be a "real" release,
+#          i.e. with format X.Y.Z. However it is checked that the tag is 'vVERSION', that is
+#          small 'v' immediately followed by the version string. 
 
 # - Setting a  tag using  "Releases" in  GitHub adds an  annotated tag  which is
 #   treated  as a  branch.  The  Travis build  has the  tag as  branch aand  the
@@ -33,13 +37,14 @@ script:
 # - Setting an annotated tag in Git CLI and pushing to master (or another branch) with
 #   --follow-tags triggers the Travis build
 
-
-
 after_success:
   - |   # deploy snapshot
-    if [ "$TRAVIS_EVENT_TYPE" == push -a "$TRAVIS_BRANCH" == "devel" ] &&
-       [[ $MY_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+-SNAPSHOT$ ]]; then
-      echo "PUBLISH DEVEL"
+    if [ "$TRAVIS_EVENT_TYPE" == push -a "$TRAVIS_BRANCH" == "devel" ]; then
+      if [[ $MY_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+-SNAPSHOT$ ]]; then
+        echo "PUBLISH DEVEL";
+      else
+        echo "ERROR"; exit 1;
+      fi;
     fi
 
   - |  # deploy release
