@@ -24,8 +24,16 @@ script:
 #           Check on version ensures nothing bad happens if merging from release to devel
 #           and forgetting to change version to -SNAPSHOT.
 #
-# Release: Travis treats tags exclusively
-#
+# Release: here there's an inconsistency between Git CLI and GitHub UI.
+
+# - Setting a  tag using  "Releases" in  GitHub adds an  annotated tag  which is
+#   treated  as a  branch.  The  Travis build  has the  tag as  branch aand  the
+#   variable TRAVIS_TAG set.
+
+# - Setting an annotated tag in Git CLI and pushing to master (or another branch) with
+#   --follow-tags triggers the Travis build 
+
+
 after_success:
   - |   # deploy snapshot
     if [ "$TRAVIS_EVENT_TYPE" == push -a "$TRAVIS_BRANCH" == "devel" ] &&
