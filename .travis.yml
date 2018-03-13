@@ -24,7 +24,8 @@ script:
 #           Check on version ensures nothing bad happens if merging from release to devel
 #           and forgetting to change version to -SNAPSHOT.
 #
-# Release: Travis treats tags exclusively 
+# Release: Travis treats tags exclusively
+#
 after_success:
   - |   # deploy snapshot
     if [ "$TRAVIS_EVENT_TYPE" == push -a "$TRAVIS_BRANCH" == "devel" ] &&
