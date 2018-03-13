@@ -22,11 +22,13 @@ script:
 
 after_success:
   - |   # deploy snapshot
-    if [ "$TRAVIS_EVENT_TYPE" == push -a "$TRAVIS_BRANCH" == "devel" ]; then
+    if [ "$TRAVIS_EVENT_TYPE" == push -a "$TRAVIS_BRANCH" == "devel" ] &&
+       [[ $MY_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+-SNAPSHOT$ ]]; then
       echo "PUBLISH DEVEL"
     fi
 
   - |  # deploy release
-    if [ "$TRAVIS_EVENT_TYPE" == push -a -n "$TRAVIS_TAG" ]; then
+    if [ "$TRAVIS_EVENT_TYPE" == push -a -n "$TRAVIS_TAG" ] &&
+       [[ $MY_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
       echo "RELEASE"
     fi
