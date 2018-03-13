@@ -24,9 +24,10 @@ script:
 #           If it happens, version format is checked. If no -SNAPSHOT build fails
 #           (e.g. useful if merging release back to devel and forgetting version change).
 #
-# Release: should happen only when pushing a tag.
+# Release: should happen only when pushing a tag. Becuase of how Travis behaves, the tag should
+#          be pushed on its own after a commit has been pushed. Pushing at once with
 
-The version and tag need not be a "real" release,
+# The version and tag need not be a "real" release,
 #          i.e. with format X.Y.Z. However it is checked that the tag is 'vVERSION', that is
 #          small 'v' immediately followed by the version string. 
 
@@ -50,5 +51,5 @@ after_success:
   - |  # deploy release
     if [ "$TRAVIS_EVENT_TYPE" == push -a -n "$TRAVIS_TAG" ] &&
        [[ $MY_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-      echo "RELEASE"
+      echo "RELEASE";
     fi
