@@ -45,9 +45,12 @@ after_success:
     fi
 
   - |  # deploy release
-    if [ "$TRAVIS_EVENT_TYPE" == push -a -n "$TRAVIS_TAG" ] &&
-       [ "$TRAVIS_TAG" == "v$MY_VERSION" ]; then
-      echo "RELEASE";
+    if [ "$TRAVIS_EVENT_TYPE" == push -a -n "$TRAVIS_TAG" ]; then
+      if [ "$TRAVIS_TAG" == "v$MY_VERSION" ]; then
+        echo "RELEASE";
+      else
+        echo "ERROR"; exit 1;
+      fi;
     fi
 
 
