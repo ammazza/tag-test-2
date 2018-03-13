@@ -20,6 +20,11 @@ script:
     lein test && echo "Done";
     echo "branch: $TRAVIS_BRANCH, version: $MY_VERSION,event: $TRAVIS_EVENT_TYPE, travis-tag: $TRAVIS_TAG, my-tag: $MY_TAG"
 
+# Snapshot: happens only on push to devel (and not on PR, so safe to leave PR-build on).
+#           Check on version ensures nothing bad happens if merging from release to devel
+#           and forgetting to change version to -SNAPSHOT.
+#
+# Release: Travis treats tags exclusively 
 after_success:
   - |   # deploy snapshot
     if [ "$TRAVIS_EVENT_TYPE" == push -a "$TRAVIS_BRANCH" == "devel" ] &&
