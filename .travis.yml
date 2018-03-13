@@ -4,7 +4,7 @@ jdk: oraclejdk8
 env:
   global:
     - MY_VERSION: $(lein project-version 2> /dev/null)
-    - MY_TAG: $(git describe --tags 2> /dev/null)
+    - MY_TAG: $(git describe --tags|head -1 2> /dev/null)
 
 branches:
   only:
@@ -20,23 +20,19 @@ script:
     lein test && echo "Done";
     echo "branch: $TRAVIS_BRANCH, version: $MY_VERSION,event: $TRAVIS_EVENT_TYPE, travis-tag: $TRAVIS_TAG, my-tag: $MY_TAG"
 
-# Snapshot: happens only on push to devel (and not on PR, so safe to leave PR-build on).
-#           If it happens, version format is checked. If no -SNAPSHOT build fails
-#           (e.g. useful if merging release back to devel and forgetting version change).
+# Snapshot: happens  only on  push to  devel (and not  on PR,  so safe  to leave
+#           PR-build  on).  If  it happens,  version  format is  checked. If  no
+#           -SNAPSHOT build fails (e.g. useful  if merging release back to devel
+#           and forgetting version change).
 #
-# Release: should happen only when pushing a tag. Becuase of how Travis behaves, the tag should
-#          be pushed on its own after a commit has been pushed. Pushing at once with
-
-# The version and tag need not be a "real" release,
-#          i.e. with format X.Y.Z. However it is checked that the tag is 'vVERSION', that is
-#          small 'v' immediately followed by the version string. 
-
-# - Setting a  tag using  "Releases" in  GitHub adds an  annotated tag  which is
-#   treated  as a  branch.  The  Travis build  has the  tag as  branch aand  the
-#   variable TRAVIS_TAG set.
-
-# - Setting an annotated tag in Git CLI and pushing to master (or another branch) with
-#   --follow-tags triggers the Travis build
+# Release: should happen only when pushing a  tag. A tag can be pushed either as
+#          follow-tags or independently (that latter is better because it can be
+#          use to approved already merged).  The  tag commit has branch equal to
+#          the  tag, so  don't check  the  branch. Using  TRAVIS_TAG to  trigger
+#          release publication  makes behaviour  consistent between CLI  and UI.
+#          The version  and tag need not  be a "real" release,  i.e. with format
+#          X.Y.Z. However  it is  checked that  the tag  is 'vVERSION',  that is
+#          small 'v' immediately followed by the version string.
 
 after_success:
   - |   # deploy snapshot
@@ -50,7 +46,7 @@ after_success:
 
   - |  # deploy release
     if [ "$TRAVIS_EVENT_TYPE" == push -a -n "$TRAVIS_TAG" ] &&
-       [[ $MY_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+       [ "$TRAVIS_TAG" == "v$MY_VERSION" ]; then
       echo "RELEASE";
     fi
 
